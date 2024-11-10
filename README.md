@@ -37,7 +37,9 @@ tcp_tx_kb{comm="b'python3'",laddr="192.168.188.93:8000",pid="28879",raddr="192.1
 1，kernel需要支持ebpf的特性，目测测试系统rhel8.9和rhel9.3没啥问题。
 
 2，安装bcc-tools，安装镜像里就有这个包 yum -y install bcc-tools
+
 [root@rhel93 ~]# rpm -qa |grep bcc-tools
+
 bcc-tools-0.26.0-4.el9.x86_64
 
 3，安装python3的pip包，yum -y install python3-pip.noarch
