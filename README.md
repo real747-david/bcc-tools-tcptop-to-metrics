@@ -50,6 +50,31 @@ bcc-tools-0.26.0-4.el9.x86_64
 
 后台运行静默运行，没有任何debug输出的方式： nohup python3 tcptop-metrics.py > /dev/null 2>&1 & 
 
+systemctl service模式
+```
+cat << EOF > /etc/systemd/system/tcptop-metrics.service
+[Unit]
+Description=TCP Metrics Service
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /root/tcptop-metrics.py
+WorkingDirectory=/root/
+StandardOutput=null
+StandardError=null
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+sudo systemctl daemon-reload
+sudo systemctl enable tcptop-metrics.service
+sudo systemctl start tcptop-metrics.service
+sudo systemctl status tcptop-metrics.service
+```
+
 metrics的web默认监听8000端口，更改端口需要修改代码里的端口相关的配置即可。
 
 prometheus的配置：
