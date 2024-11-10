@@ -57,3 +57,5 @@ prometheus的配置：
           - "192.168.188.93:8000"
        
 grafana dashboard 请下载文件 ebpf TCP top10-1731217974976.json
+![41c7c5119016b43cb9a400389dbc4d5](https://github.com/user-attachments/assets/bc32d27c-ca62-46c9-bb1b-6bccc254f2e6)
+
