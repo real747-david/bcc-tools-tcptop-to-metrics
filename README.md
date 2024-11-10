@@ -33,6 +33,7 @@ tcp_tx_kb{comm="b'python3'",laddr="192.168.188.93:8000",pid="28879",raddr="192.1
 tcp_tx_kb{comm="b'python3'",laddr="192.168.188.93:8000",pid="28879",raddr="192.168.188.66:27452",user="root"} 0.0
 
 如何使用：
+
 1，kernel需要支持ebpf的特性，目测测试系统rhel8.9和rhel9.3没啥问题。
 
 2，安装bcc-tools，安装镜像里就有这个包 yum -y install bcc-tools
