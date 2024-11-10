@@ -46,18 +46,22 @@ bcc-tools-0.26.0-4.el9.x86_64
 
 4，安装python3里面的prometheus_client包， python3 -m pip install prometheus_client
 
-5，下载脚本，运行 python3 tcptop-metrics.py 
+5，下载脚本，运行 python3 tcptop-metrics.py
+
+后台运行静默运行，没有任何debug输出的方式： nohup python3 tcptop-metrics.py > /dev/null 2>&1 & 
 
 metrics的web默认监听8000端口，更改端口需要修改代码里的端口相关的配置即可。
 
 prometheus的配置：
 
+```
   - job_name: "tcptop"
     static_configs:
       - targets:
           - "192.168.188.89:8000"
           - "192.168.188.93:8000"
-       
+ ```
+      
 grafana dashboard 请下载文件 ebpf TCP top10-1731217974976.json
 ![41c7c5119016b43cb9a400389dbc4d5](https://github.com/user-attachments/assets/bc32d27c-ca62-46c9-bb1b-6bccc254f2e6)
 
