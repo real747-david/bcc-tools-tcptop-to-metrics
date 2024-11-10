@@ -61,35 +61,37 @@ def update_metrics():
     rx_metrics = deque(maxlen=10)
     tx_metrics = deque(maxlen=10)
     
-    for line in run_tcptop():
-        metrics = parse_output(line)
-        if metrics:
-            pid, user, laddr, raddr, comm, rx_kb, tx_kb = metrics
-            
-            rx_metrics.append((rx_kb, pid, user, laddr, raddr, comm))
-            tx_metrics.append((tx_kb, pid, user, laddr, raddr, comm))
-            
-            # Sort and keep top 10 by received and sent bytes
-            top_rx_metrics = sorted(rx_metrics, key=lambda x: x[0], reverse=True)[:10]
-            top_tx_metrics = sorted(tx_metrics, key=lambda x: x[0], reverse=True)[:10]
-            
-            # Clear previous values to ensure only the latest data is shown
-            tcp_rx_kb.clear()
-            tcp_tx_kb.clear()
-            
-            # Update Prometheus metrics with the top metrics
-            for rx_kb, pid, user, laddr, raddr, comm in top_rx_metrics:
-                tcp_rx_kb.labels(pid=pid, user=user, laddr=laddr, raddr=raddr, comm=comm).set(rx_kb)
-            for tx_kb, pid, user, laddr, raddr, comm in top_tx_metrics:
-                tcp_tx_kb.labels(pid=pid, user=user, laddr=laddr, raddr=raddr, comm=comm).set(tx_kb)
-            
-            # Debug output
-            print(f"Debug: tcptop line - {line}")
-            print(f"Debug: Top RX Metrics: {top_rx_metrics}")
-            print(f"Debug: Top TX Metrics: {top_tx_metrics}")
-        
-        # Only process and expose the latest metrics for each request
-        time.sleep(1) # Adjust sleep time as needed
+    while True:
+        for line in run_tcptop():
+            metrics = parse_output(line)
+            if metrics:
+                pid, user, laddr, raddr, comm, rx_kb, tx_kb = metrics
+                
+                # Update deque directly
+                rx_metrics.append((rx_kb, pid, user, laddr, raddr, comm))
+                tx_metrics.append((tx_kb, pid, user, laddr, raddr, comm))
+                
+                # Sort and get top 10
+                top_rx_metrics = sorted(rx_metrics, key=lambda x: x[0], reverse=True)[:10]
+                top_tx_metrics = sorted(tx_metrics, key=lambda x: x[0], reverse=True)[:10]
+
+                # Update Prometheus metrics
+                tcp_rx_kb.clear()
+                tcp_tx_kb.clear()
+                
+                for rx_kb, pid, user, laddr, raddr, comm in top_rx_metrics:
+                    tcp_rx_kb.labels(pid=pid, user=user, laddr=laddr, raddr=raddr, comm=comm).set(rx_kb)
+                
+                for tx_kb, pid, user, laddr, raddr, comm in top_tx_metrics:
+                    tcp_tx_kb.labels(pid=pid, user=user, laddr=laddr, raddr=raddr, comm=comm).set(tx_kb)
+
+                # Debug output
+                print(f"Debug: tcptop line - {line}")
+                print(f"Debug: Top RX Metrics: {top_rx_metrics}")
+                print(f"Debug: Top TX Metrics: {top_tx_metrics}")
+
+        time.sleep(0.5)  # This can dynamically be adjusted based on conditions
+
 
 if __name__ == '__main__':
     start_http_server(8000)
